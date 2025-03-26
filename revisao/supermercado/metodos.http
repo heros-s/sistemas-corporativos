@@ -1,0 +1,13 @@
+### Listar produtos
+GET http://localhost:3000/produtos
+
+### Adicionar produtos
+POST http://localhost:3000/produtos
+content-type: application/json
+
+{
+    "nome": "Champignon",
+    "preco": 15.99,
+    "dataValidade": "2025-12-31",
+    "quantidadeEstoque": 150
+}
