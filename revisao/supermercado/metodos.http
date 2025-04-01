@@ -11,3 +11,19 @@ content-type: application/json
     "dataValidade": "2025-12-31",
     "quantidadeEstoque": 150
 }
+
+### Inserir produto novo
+PUT http://localhost:3000/produtos/1
+content-type: application/json
+
+{
+    "id": 1,
+    "nome": "Teste",
+    "preco": 170.00,
+    "dataValidade": "2025-01-01",
+    "quantidadeEstoque": 20
+}
+
+### Deletar produto
+DELETE http://localhost:3000/produtos/1
+content-type: application/json
