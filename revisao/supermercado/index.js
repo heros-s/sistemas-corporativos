@@ -1,9 +1,10 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 
 const app = express();
-
 app.use(express.json());
 
+const SECRET_KEY = 'senha'
 const produtos = [
     {
         id: 1,
@@ -42,7 +43,48 @@ const produtos = [
     }
 ];
 
-app.get('/produtos', (req, res) => {
+app.post('/login', (req,res) => {
+    const {usuario, senha} = req.body;
+
+    if(usuario === 'admin' && senha === '1234') {
+        const token = jwt.sign({ usuario }, SECRET_KEY, {
+            expiresIn: '1h',
+        });
+
+        return res.json({
+            mensagem: 'Login executado com sucesso!',
+            token,
+        });
+    }
+
+    return res.status(401).json({
+        mensagem: 'Usuário ou senha inválidos.',
+    });
+});
+
+const autenticarToken = (req, res, next) => {
+    console.log(req);
+    const token = req.headers["authorization"];
+
+    if(!token) {
+        return res.status(403).json({
+            mensagem: "Token não encontrado.",
+        })
+    }
+
+    jwt.verify(token, SECRET_KEY, (err, decoded) => {
+        if (err) {
+            return res.status(403).json({
+                mensagem: "Token inválido",
+            })
+        }
+
+    req.usuario = decoded.usuario;
+    next();
+    })
+}
+
+app.get('/produtos', autenticarToken, (req, res) => {
     res.json(produtos);
 });
 
@@ -85,7 +127,7 @@ app.delete("/produtos/:id", (req,res) => {
     res.json({
         mensagem: "Produto eliminado com sucesso!",
     })
-})
+});
 
 app.listen(3000, () => {
     console.log("Servidor rodando na porta 3000!");
